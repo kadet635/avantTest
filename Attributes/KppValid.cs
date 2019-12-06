@@ -3,6 +3,9 @@ using AvantTest.Models;
 
 namespace AvantTest.Attributes
 {
+    /// <summary>
+    /// Атрибут осуществляющий валидацию модели Contractor на предмет наличия у Организации KPP
+    /// </summary>
     public class KppValidAttribute : ValidationAttribute
     {
         public KppValidAttribute()

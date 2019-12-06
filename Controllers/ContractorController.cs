@@ -9,10 +9,14 @@ using AvantTest.Services;
 using System.Net;
 using System.IO;
 using System.Text.Json;
+using AvantTest.Models.Dadata;
 
 
 namespace AvantTest.Controllers
 {
+    /// <summary>
+    /// Контроллер для работы с контрагентами
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class ContractorController : ControllerBase
@@ -22,6 +26,12 @@ namespace AvantTest.Controllers
         {
             db = _db;
         }
+        
+        
+        /// <summary>
+        /// Метод для получения всех записей контрагентов
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Get()
         {
@@ -30,21 +40,38 @@ namespace AvantTest.Controllers
             {
                 result = db.GetAll();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return BadRequest("Ошибка базы данных");
             }
-            
+
             return Ok(result);
         }
 
+        /// <summary>
+        /// Метод создания контрагента
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]Contractor data)
         {
             try
             {
-                var ddataResponse = await GetDadataInfo(data.INN, data.KPP);
-                if(ddataResponse.suggestions.Count==0)
+                if (db.CheckExist(data.INN, data.KPP))
+                {
+                    return BadRequest("Ошибка, этот контрагент существует");
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest("Ошибка базы данных");
+            }
+
+            try
+            {
+                RootObject ddataResponse = await GetDadataInfo(data.INN, data.KPP);
+                if (ddataResponse.suggestions.Count == 0)
                 {
                     return BadRequest("Ошибка, по данной компании не найдено данных в ЕГРЮЛ");
                 }
@@ -59,10 +86,10 @@ namespace AvantTest.Controllers
             }
             try
             {
-                var result = db.Create(data);
+                Contractor result = db.Create(data);
                 return Ok(result);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return BadRequest("Ошибка при сохранении в базу данных");
             }
@@ -95,11 +122,11 @@ namespace AvantTest.Controllers
                 requestStream.Write(byteArray, 0, byteArray.Length);
             }
 
-            var response = await request.GetResponseAsync();
+            WebResponse response = await request.GetResponseAsync();
             //получаем данные
             using (var responseStream = response.GetResponseStream())
             {
-                var responseObj = await JsonSerializer.DeserializeAsync<AvantTest.Models.Dadata.RootObject>(responseStream);
+                RootObject responseObj = await JsonSerializer.DeserializeAsync<AvantTest.Models.Dadata.RootObject>(responseStream);
                 return responseObj;
             }
         }

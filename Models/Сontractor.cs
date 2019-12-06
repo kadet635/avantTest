@@ -4,6 +4,9 @@ using Newtonsoft.Json;
 
 namespace AvantTest.Models
 {
+    /// <summary>
+    /// Класс, описывающий контрагента
+    /// </summary>
     [KppValid]
     public class Contractor
     {
@@ -32,7 +35,7 @@ namespace AvantTest.Models
         public TypeContractor Type { get; set; }
         [Required(ErrorMessage="Поле INN обязательно для заполнения")]
         /// <summary>
-        /// инн
+        /// Инн контрагента
         /// </summary>
         /// <value></value>
         public string INN { get; set; }

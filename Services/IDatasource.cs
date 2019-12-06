@@ -8,5 +8,6 @@ namespace AvantTest.Services
     {
         Contractor Create(Contractor _data);
         IEnumerable<Contractor> GetAll();
+        bool CheckExist(string _inn, string _kpp);
     }
 }

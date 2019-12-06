@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using AvantTest.Services;
 using Microsoft.OpenApi.Models;
+using System.IO;
 
 namespace AvantTest
 {
@@ -34,6 +35,8 @@ namespace AvantTest
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                 var filePath = "bin\\avantApi.xml";
+                 c.IncludeXmlComments(filePath);
             });
 
         }
